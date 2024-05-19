@@ -28,3 +28,36 @@ module "vpc" {
     Name = "rms"
   }
 }
+
+# ##### GATEWAY
+
+# resource "aws_internet_gateway" "rms" {
+#   vpc_id = module.vpc.vpc_id
+
+#   tags = {
+#       Name = "rms-vpc-internetgateway"
+#   }
+# }
+
+# resource "aws_route_table" "rms-public" {
+#   vpc_id = module.vpc.vpc_id
+
+#   tags = {
+#       Name = "rms-vpc-routetable-public"
+#   }
+# }
+
+# ## Public Route Table rules
+# resource "aws_route" "rms-public" {
+#   route_table_id         = aws_route_table.rms-public.id
+#   gateway_id             = aws_internet_gateway.rms.id
+#   destination_cidr_block = "0.0.0.0/0"t
+# }
+
+# ## Public Route table associations
+# resource "aws_route_table_association" "rms-public" {
+#   count = length(module.vpc.public_subnets)
+
+#   subnet_id      = module.vpc.public_subnets[count.index].id
+#   route_table_id = aws_route_table.rms-public.id
+# }
