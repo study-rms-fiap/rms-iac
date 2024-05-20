@@ -31,3 +31,14 @@ output "cluster_name" {
   description = "Kubernetes Cluster Name"
   value       = module.eks.cluster_name
 }
+
+output "hello_base_url" {
+  value = module.gateway.hello_base_url
+}
+
+###########################################################################
+#Database
+
+output "rds_order_endpoint" {
+  value = module.database.rds_order_endpoint
+}

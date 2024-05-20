@@ -16,14 +16,22 @@ provider "aws" {
 module "network" {
   source = "./modules/network"
 
-  region = var.region
+  region       = var.region
+  cluster_name = var.cluster_name
+}
+//----------DB--------------//
+module "database" {
+  source = "./modules/database"
+
+  public_subnets = module.network.public_subnets
+  vpc_id         = module.network.vpc_id
 }
 
 //----------EKS--------------//
 module "eks" {
   source = "./modules/eks"
 
-  cluster_name    = "rms_cluster"
+  cluster_name    = var.cluster_name
   vpc_id          = module.network.vpc_id
   public_subnets  = module.network.public_subnets
   private_subnets = module.network.private_subnets
@@ -35,23 +43,28 @@ module "ecr-order" {
   source = "./modules/ecr"
 
   repository_name = "api-order"
-  region   = var.region
+  region          = var.region
 }
 
 module "ecr-payment" {
-  source = "./modules/ecr"
+  source          = "./modules/ecr"
   repository_name = "api-payment"
 
-  region   = var.region
+  region = var.region
 }
 
 module "ecr-production" {
   source = "./modules/ecr"
 
   repository_name = "api-production"
-  region   = var.region
+  region          = var.region
 }
 
-//----------DB--------------//
-
 //---------Gateway/ELB-----//
+
+module "gateway" {
+  source = "./modules/gateway"
+
+  vpc_id          = module.network.vpc_id
+  private_subnets = module.network.private_subnets
+}
