@@ -1,0 +1,129 @@
+services:
+  order:
+    restart: always
+    container_name: order-api
+    image: order-api
+    networks:
+      - rms-network
+    env_file: 
+      - ./.env
+    environment:
+      - DB_DATABASE=db-order
+      - PORT=3001
+    ports:
+      - 3001:3001
+    expose:
+      - 3001
+    depends_on:
+      - db
+
+  payment:
+    restart: always
+    container_name: payment-api
+    image: payment-api
+    networks:
+      - rms-network
+    env_file:
+      - ./.env
+    environment:
+      - DB_DATABASE=db-payment
+      - PORT=${PAYMENT_PORT}
+    ports:
+      - 3002:3002
+    expose:
+      - "3002"
+    depends_on:
+      - db
+      - mongo
+      - broker
+      - production
+
+  production:
+    restart: always
+    container_name: production-api
+    image: production-api
+    networks:
+      - rms-network
+    env_file:
+      - ./.env
+    environment:
+      - DB_DATABASE=db-production
+      - PORT=3003
+    ports:
+      - 3003:3003
+    expose:
+      - "3003"
+    depends_on:
+      - db
+      - mongo
+      - broker
+
+  db:
+    image: mariadb:latest
+    container_name: db
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    environment:
+      - MARIADB_ROOT_PASSWORD=fiap
+      - MARIADB_USER=fiap
+      - MARIADB_PASSWORD=fiap
+      - MARIADB_DATABASE=order
+    networks:
+      - rms-network
+    ports:
+      - 3306:3306
+
+  mongo:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - rms-network
+
+  broker:
+    image: bitnami/kafka
+    container_name: broker
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    user: root
+    ports:
+      - 9092
+    networks:
+      - rms-network
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://broker:9092
+      - KAFKA_BROKER_ID=1
+      - KAFKA_KRAFT_CLUSTER_ID=LelM2dIFQkiUFvXCEcqRWA
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@broker:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+  
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    ports:
+     - "9000:9000"
+    environment:
+      - KAFKA_BROKERCONNECT = broker:9092
+      - JVM_OPT= "-Xms16M -Xmx24M
+      - KAFKA_LISTENERS = "INTERNAL =//:29092,EXTERNAL://:9092"
+      - KAFKA_ADVERTISED_LISTENERS = "INTERNAL://kafka:29092,EXTERNAL://broker:9092"
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP = "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      - KAFKA_INTER_BROKER_LISTENER_NAME = "INTERNAL"
+    networks:
+      - rms-network
+    depends_on:
+      - broker
+
+volumes:
+  kafka_data:
+
+networks:
+  rms-network:
