@@ -16,12 +16,17 @@ Com as 3 imagens criadas em seu repositorio local, pode ser executado o comando 
 Note que existe uma race condition com o Kafka e os microserviços production e payment. Ambos irão iniciar e cair até o Kafka estar em pronto, dependendo da configuração da sua maquina isso pode levar alguns segundos ou minutos.
 
 Com todos os serviços ativos, é possível acessar as aplicações através dos sequinters endereços:
-Order: http://localhost:3001/docs
-Payment: http://localhost:3002/docs
-Production: http://localhost:3003/docs
-DB:http://localhost:3006 - usuário e senha "postgres"
-Mongo: mongodb://localhost:27017
-Kafdrop: http://localhost:9000/
+- Order: http://localhost:3001/docs
+
+- Payment: http://localhost:3002/docs
+
+- Production: http://localhost:3003/docs
+
+- DB:http://localhost:3006 - usuário e senha "postgres"
+
+- Mongo: mongodb://localhost:27017
+
+- Kafdrop: http://localhost:9000/
 
 Executar os aplicativos individualmente não é recomendado, pois será necessário subir os respectivos bancos (postgres e Mongo) bem como o Kafka. Não subir um desses irá causar erros de conexão no NestJS e o mesmo não irá subir a aplicação. Caso seja necessário, adicione um arquivo .env na raiz do microserviço com as variáveis de ambiente de conexão dos bancos necessários, do Kafka e a porta desejada para aplicaçao. As variáveis de ambiente necessárias para cada aplicação está listada no arquivo main.ts.
 
@@ -33,6 +38,9 @@ Acessar a raiz do projeto usando um terminal de sua escolha que tenha acesso a C
 
 Executar do comando: `docker-compose up`
 
+## Arquitetura
+
+![Acesse aqui](./docs/arch.png)
 
 ## SAGA
 Devido a baixa complexidade e ao uso de arquitetura de microserviços, foi decidido o uso de uma SAGA Coreografada. A implementação de uma SAGA Orquestrada foi considerada e descartada por dois motivos:
@@ -41,12 +49,15 @@ Devido a baixa complexidade e ao uso de arquitetura de microserviços, foi decid
 
 2) O atual cenário de negócio, não sofre nenhuma influencia negativa do uso de uma saga orquestrada. Os sistemas envolvidos são pagamento e produção, e uma desincronização no estados entre eles, desde que pequena, não tem um efeito grande na entrega do serviço aos clientes do negócio.
 
+![SAGA](./docs/SAGA.drawio.png)
 
-## OWASP ZAP
+## Relatorio
+Relatório RIPD
 
-## RIPD
+PDF: [Acesse aqui](./docs/RIPD%20RMS.pdf)
 
-## Arquitetura
+Word:[Acesse aqui](./docs/RIPD%20RMS.docx)
+
 
 ## Video
 
