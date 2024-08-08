@@ -6,16 +6,19 @@ Order:
 Payment:
 Production:
 
-Você precisa criar uma imagem dos 3 microserviços com os respectivos comandos
-`docker build -t production-api .`
-`docker build -t payment-api .`
-`docker build -t order-api .`
+Você precisa criar uma imagem dos 3 microserviços com os respectivos comandos:
+
+`docker build -t production-api .` Link repo production
+
+`docker build -t payment-api .` Link repo payment
+
+`docker build -t order-api .` Link repo order
 
 Com as 3 imagens criadas em seu repositorio local, pode ser executado o comando `docker-compose up`.
 
-Note que existe uma race condition com o Kafka e os microserviços production e payment. Ambos irão iniciar e cair até o Kafka estar em pronto, dependendo da configuração da sua maquina isso pode levar alguns segundos ou minutos.
+Note que existe uma race condition com o Kafka e os microserviços production e payment. Ambos irão iniciar e cair até o Kafka estar inicializado, dependendo da configuração da sua maquina isso pode levar alguns segundos ou minutos.
 
-Com todos os serviços ativos, é possível acessar as aplicações através dos sequinters endereços:
+Com todos os serviços ativos, é possível acessar as aplicações através dos seguintes endereços:
 - Order: http://localhost:3001/docs
 
 - Payment: http://localhost:3002/docs
@@ -28,15 +31,10 @@ Com todos os serviços ativos, é possível acessar as aplicações através dos
 
 - Kafdrop: http://localhost:9000/
 
-Executar os aplicativos individualmente não é recomendado, pois será necessário subir os respectivos bancos (postgres e Mongo) bem como o Kafka. Não subir um desses irá causar erros de conexão no NestJS e o mesmo não irá subir a aplicação. Caso seja necessário, adicione um arquivo .env na raiz do microserviço com as variáveis de ambiente de conexão dos bancos necessários, do Kafka e a porta desejada para aplicaçao. As variáveis de ambiente necessárias para cada aplicação está listada no arquivo main.ts.
+Executar os aplicativos individualmente não é recomendado, pois será necessário subir os respectivos bancos (postgres / Mongo) bem como o Kafka. Não subir um desses irá causar erros de conexão no NestJS e o mesmo não sobe a aplicação se não consegue acesso ao respectivo DB. Caso seja necessário, adicione um arquivo .env na raiz do microserviço com as variáveis de ambiente de conexão dos bancos necessários e a porta desejada para aplicaçao. As variáveis de ambiente necessárias para cada aplicação está listada no arquivo main.ts.
 
 Criados os arquivos, execute o comando `npm install` no diretório da aplicação e depois `npm run start`.
 
-### Requisitos
-
-Acessar a raiz do projeto usando um terminal de sua escolha que tenha acesso a CLI do Docker
-
-Executar do comando: `docker-compose up`
 
 ## Arquitetura
 

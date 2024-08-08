@@ -5,7 +5,7 @@ services:
     image: order-api
     networks:
       - rms-network
-    env_file: 
+    env_file:
       - ./.env
     environment:
       - DB_DATABASE=db-order
@@ -86,6 +86,8 @@ services:
     container_name: broker
     volumes:
       - kafka_data:/var/lib/kafka/data
+      - ./kafka/run-init-kafka-topics.sh:/docker-entrypoint-initdb.d/run-init-kafka-topics.sh:ro
+      - ./kafka/init-kafka-topics.sh:/init-kafka-topics.sh:ro
     user: root
     ports:
       - 9092
@@ -105,11 +107,11 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
-  
+
   kafdrop:
     image: obsidiandynamics/kafdrop
     ports:
-     - "9000:9000"
+      - "9000:9000"
     environment:
       - KAFKA_BROKERCONNECT = broker:9092
       - JVM_OPT= "-Xms16M -Xmx24M
@@ -124,6 +126,7 @@ services:
 
 volumes:
   kafka_data:
+
 
 networks:
   rms-network:
