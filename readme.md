@@ -59,7 +59,7 @@ Word:[Acesse aqui](./docs/RIPD%20RMS.docx)
 
 ## Video
 
-
+https://www.youtube.com/playlist?list=PLlpl_RqAcQk4nqZAawjzzwq9rjYRrV_qR
 
 ## Comandos
 
